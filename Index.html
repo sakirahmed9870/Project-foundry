@@ -1,0 +1,201 @@
+from pathlib import Path
+
+html = r'''<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudyForge — Class 12 Project Maker</title>
+<style>
+:root{
+  --bg:#080b18;--panel:#11162a;--panel2:#171d35;--text:#f7f8ff;--muted:#aeb6d4;
+  --primary:#7667ff;--secondary:#39b9ff;--accent:#d36cff;--border:#293252;
+}
+*{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:radial-gradient(circle at 15% 10%,#20275a 0,#080b18 34%,#060812 100%);color:var(--text)}
+button,input,select,textarea{font:inherit} button{cursor:pointer;border:0}
+.app{min-height:100vh}.topbar{height:70px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:#090c19e8;backdrop-filter:blur(14px);position:sticky;top:0;z-index:20}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px}.logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--secondary));display:grid;place-items:center}
+.top-actions{display:flex;gap:10px}.btn{padding:10px 16px;border-radius:11px;color:white;background:#202743;border:1px solid #303b62}.btn.primary{background:linear-gradient(135deg,var(--primary),#a45cff);border:0}.btn.green{background:#176b54}.btn.small{padding:8px 12px;font-size:13px}
+.layout{display:grid;grid-template-columns:235px 1fr;min-height:calc(100vh - 70px)}.sidebar{border-right:1px solid var(--border);padding:20px 14px;background:#0b0f20}
+.nav{display:flex;flex-direction:column;gap:7px}.nav button{background:transparent;color:#b8c0dc;text-align:left;padding:12px 14px;border-radius:10px}.nav button.active,.nav button:hover{background:#1b2240;color:white}.nav small{color:#69739b;padding:16px 14px 6px;text-transform:uppercase;letter-spacing:.12em}
+.main{padding:28px;max-width:1500px;width:100%;margin:auto}.page{display:none}.page.active{display:block}.hero{display:grid;grid-template-columns:1.2fr .8fr;gap:22px}.card{background:linear-gradient(145deg,#12172c,#0e1325);border:1px solid var(--border);border-radius:18px;padding:22px;box-shadow:0 18px 45px #0004}
+.hero h1{font-size:clamp(34px,5vw,62px);line-height:1.02;margin:8px 0 14px}.gradient{background:linear-gradient(90deg,#fff,#7e9dff,#c878ff);-webkit-background-clip:text;color:transparent}.hero p{color:var(--muted);font-size:17px;line-height:1.7}.feature-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:22px}.feature{padding:16px;background:#171d35;border:1px solid #273052;border-radius:13px}.feature b{display:block;margin-bottom:5px}.feature span{font-size:13px;color:#9da8ca}
+.section-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.section-title h2{margin:0}.muted{color:var(--muted)}
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.field{display:flex;flex-direction:column;gap:7px}.field.full{grid-column:1/-1}.field label{font-size:13px;color:#b8c0dc}.field input,.field select,.field textarea{background:#0a0f20;color:white;border:1px solid #303a5c;border-radius:10px;padding:11px 12px;outline:none}.field textarea{min-height:100px;resize:vertical}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--primary)}
+.steps{display:flex;gap:8px;overflow:auto;margin-bottom:20px}.step{white-space:nowrap;padding:9px 12px;border-radius:999px;background:#141a30;color:#7f89ab;font-size:13px}.step.active{background:#332e72;color:#fff}
+.templates{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}.template{border:2px solid transparent;background:#11172a;border-radius:14px;padding:10px}.template.active{border-color:var(--primary)}.template-preview{height:190px;border-radius:9px;display:flex;align-items:center;justify-content:center;text-align:center;padding:16px;font-family:Georgia,serif;background:#f7f1df;color:#222;position:relative;overflow:hidden}.template-preview:before{content:"";position:absolute;inset:8px;border:1px solid #b99755}.template-preview.modern{background:#101a35;color:white;font-family:Arial}.template-preview.minimal{background:white;color:#333}.template-preview.vintage{background:#d9bd83;color:#3e2812}.template-preview.rose{background:#ffe8f0;color:#6d2943}.template-preview.blue{background:#e9f4ff;color:#153b67}.template-name{padding:10px 4px 3px;font-weight:700}.template-sub{font-size:12px;color:#8f99b9;padding:0 4px 5px}
+.designer{display:grid;grid-template-columns:360px 1fr;gap:20px}.preview-shell{background:#232942;border:1px solid #343e61;border-radius:18px;padding:20px;display:flex;justify-content:center;min-height:680px}.paper{width:min(100%,520px);aspect-ratio:210/297;background:#f7f1df;color:#222;position:relative;padding:58px 45px;box-shadow:0 15px 45px #0007;font-family:Georgia,serif;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;overflow:hidden}.paper .inner{position:absolute;inset:18px;border:2px solid #b79650;pointer-events:none}.paper .corner{position:absolute;font-size:48px;color:#b79650}.c1{top:25px;left:28px}.c2{top:25px;right:28px;transform:rotate(90deg)}.c3{bottom:25px;left:28px;transform:rotate(-90deg)}.c4{bottom:25px;right:28px;transform:rotate(180deg)}.paper h1{font-size:30px;margin:0 0 18px;max-width:90%}.paper h2{font-size:23px;margin:7px 0 24px}.paper p{line-height:1.65;margin:5px}.paper .meta{margin-top:28px;font-size:14px;line-height:1.9}.paper.modern{background:#0e1830;color:#fff;font-family:Arial}.paper.modern .inner{border-color:#5f8cff}.paper.modern .corner{color:#6f83ff}.paper.minimal{background:#fff;color:#222;font-family:Arial}.paper.minimal .inner{border:1px solid #bbb}.paper.minimal .corner{display:none}.paper.vintage{background:#d8bd85;color:#3b2917}.paper.vintage .inner{border-color:#70471e}.paper.rose{background:#ffe8f0;color:#6d2943}.paper.rose .inner{border-color:#d77a9e}.paper.blue{background:#e9f4ff;color:#153b67}.paper.blue .inner{border-color:#5796cf}.custom-note{font-size:12px;color:#8d98b8;margin-top:10px}
+.project-pages{display:grid;grid-template-columns:220px 1fr;gap:16px}.page-list{display:flex;flex-direction:column;gap:7px}.page-list button{background:#13192e;color:#aeb7d5;border:1px solid #252e4c;border-radius:9px;padding:11px;text-align:left}.page-list button.active{background:#302b68;color:#fff;border-color:#6458da}.project-view{background:#242a42;border-radius:15px;padding:18px;min-height:700px}.content-paper{background:#fff;color:#222;min-height:650px;padding:55px;max-width:800px;margin:auto;box-shadow:0 10px 30px #0005;font-family:Georgia,serif}.content-paper h1{text-align:center}.content-paper h2{border-bottom:1px solid #ccc;padding-bottom:8px}.content-paper p{line-height:1.8}.content-paper table{border-collapse:collapse;width:100%}.content-paper td,.content-paper th{border:1px solid #999;padding:9px}.content-paper th{background:#eee}
+.notes-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}.note{background:#12182c;border:1px solid #2b3555;padding:18px;border-radius:14px}.note h3{margin-top:0}.note p{color:#aeb6d2;line-height:1.55;font-size:14px}
+.toast{position:fixed;right:20px;bottom:20px;background:#161d35;border:1px solid #3a4770;padding:13px 16px;border-radius:12px;display:none;z-index:50}.toast.show{display:block}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{display:none}.hero,.designer,.project-pages{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.main{padding:16px}.preview-shell{min-height:auto}}
+@media print{body{background:white}.topbar,.sidebar,.no-print{display:none!important}.layout{display:block}.main{padding:0}.page{display:none!important}.page.print-page{display:block}.content-paper{box-shadow:none;max-width:none}.preview-shell{background:white;padding:0}.paper{box-shadow:none}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="topbar">
+  <div class="brand"><div class="logo">◆</div> StudyForge</div>
+  <div class="top-actions">
+    <button class="btn small" onclick="showPage('notes')">Notes</button>
+    <button class="btn small primary" onclick="showPage('builder')">Start a Project</button>
+  </div>
+</header>
+
+<div class="layout">
+<aside class="sidebar">
+  <nav class="nav">
+    <small>Workspace</small>
+    <button class="active" data-page="home" onclick="showPage('home')">⌂ Dashboard</button>
+    <button data-page="notes" onclick="showPage('notes')">▤ Notes</button>
+    <button data-page="builder" onclick="showPage('builder')">▣ Project Maker</button>
+    <button data-page="designer" onclick="showPage('designer')">✦ Front Page Designer</button>
+    <button data-page="templates" onclick="showPage('templates')">▧ Templates</button>
+    <small>Project</small>
+    <button data-page="project" onclick="showPage('project')">☷ Project Editor</button>
+  </nav>
+</aside>
+
+<main class="main">
+<section id="home" class="page active">
+  <div class="hero">
+    <div class="card">
+      <div class="muted">CLASS 12 • STUDY & PROJECT PLATFORM</div>
+      <h1>Learn Better.<br><span class="gradient">Build Smarter.</span></h1>
+      <p>Create complete school projects with decorated pages, customizable covers, notes, preview and export. Designed around the project blueprint you provided.</p>
+      <div class="top-actions">
+        <button class="btn primary" onclick="showPage('builder')">Start Now →</button>
+        <button class="btn" onclick="showPage('designer')">Design Front Page</button>
+      </div>
+      <div class="feature-grid">
+        <div class="feature"><b>📄 Complete Project</b><span>Cover, certificate, acknowledgement, index, content and conclusion.</span></div>
+        <div class="feature"><b>🎨 Custom Design</b><span>Templates, borders, colors and personal details.</span></div>
+        <div class="feature"><b>📚 Notes</b><span>Keep subject-wise notes in the same workspace.</span></div>
+        <div class="feature"><b>📥 Export</b><span>Download the project as HTML or print/save it as PDF.</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-title"><h2>Quick Actions</h2></div>
+      <div class="feature-grid">
+        <button class="feature" onclick="showPage('builder')"><b>Create Project</b><span>Choose class and subject.</span></button>
+        <button class="feature" onclick="showPage('designer')"><b>Design Front Page</b><span>Customize your cover.</span></button>
+        <button class="feature" onclick="showPage('templates')"><b>Browse Templates</b><span>Pick a decorated style.</span></button>
+        <button class="feature" onclick="showPage('notes')"><b>Open Notes</b><span>Keep study material.</span></button>
+      </div>
+      <div class="card" style="margin-top:14px;background:#0c1122">
+        <b>Project status</b>
+        <p class="muted">Ready to create a new project.</p>
+        <button class="btn green small" onclick="showPage('project')">Open Project Editor</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="builder" class="page">
+  <div class="section-title"><div><h2>Create Project</h2><div class="muted">Generate a full school-project structure from the details below.</div></div></div>
+  <div class="steps"><span class="step active">1 Select Class</span><span class="step active">2 Subject</span><span class="step active">3 Details</span><span class="step">4 Generate</span></div>
+  <div class="card">
+    <div class="form-grid">
+      <div class="field"><label>Student Name</label><input id="studentName" value="Sakir Ahmed"></div>
+      <div class="field"><label>Class</label><select id="className"><option>12th</option><option>11th</option><option>10th</option><option>9th</option><option>College</option></select></div>
+      <div class="field"><label>Roll Number</label><input id="rollNo" value="25"></div>
+      <div class="field"><label>School / College</label><input id="school" value="Your School Name"></div>
+      <div class="field"><label>Subject</label><select id="subject"><option>Accountancy</option><option>Economics</option><option>Business Studies</option><option>Mathematics</option><option>English</option><option>Computer Science</option><option>Other</option></select></div>
+      <div class="field"><label>Teacher's Name</label><input id="teacher" value="Teacher's Name"></div>
+      <div class="field full"><label>Project Title</label><input id="projectTitle" value="Accounting for Share Capital" placeholder="Enter the complete project topic"></div>
+      <div class="field"><label>Academic Session</label><input id="session" value="2026–27"></div>
+      <div class="field"><label>Project Theme</label><select id="theme"><option>Classic</option><option>Modern</option><option>Minimal</option><option>Vintage</option><option>Rose</option><option>Blue</option></select></div>
+    </div>
+    <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn primary" onclick="generateProject()">Generate Complete Project →</button>
+      <button class="btn" onclick="showPage('designer')">Customize Front Page</button>
+    </div>
+  </div>
+</section>
+
+<section id="designer" class="page">
+  <div class="section-title"><div><h2>Front Page Designer</h2><div class="muted">Customize the cover before generating your project.</div></div><button class="btn primary" onclick="saveCover()">Generate Front Page</button></div>
+  <div class="designer">
+    <div class="card">
+      <div class="field"><label>Project Title</label><input id="dTitle" value="Accounting for Share Capital" oninput="updateCover()"></div><br>
+      <div class="field"><label>Student Name</label><input id="dName" value="Sakir Ahmed" oninput="updateCover()"></div><br>
+      <div class="field"><label>Class</label><input id="dClass" value="12th" oninput="updateCover()"></div><br>
+      <div class="field"><label>Roll Number</label><input id="dRoll" value="25" oninput="updateCover()"></div><br>
+      <div class="field"><label>School / College</label><input id="dSchool" value="Your School Name" oninput="updateCover()"></div><br>
+      <div class="field"><label>Subject</label><input id="dSubject" value="Accountancy" oninput="updateCover()"></div><br>
+      <div class="field"><label>Teacher</label><input id="dTeacher" value="Teacher's Name" oninput="updateCover()"></div><br>
+      <div class="field"><label>Template</label>
+        <select id="dTheme" onchange="updateCover()">
+          <option value="classic">Classic</option><option value="modern">Modern</option><option value="minimal">Minimal</option>
+          <option value="vintage">Vintage</option><option value="rose">Elegant Rose</option><option value="blue">Academic Blue</option>
+        </select>
+      </div>
+      <p class="custom-note">Tip: change the details above and the preview updates immediately.</p>
+    </div>
+    <div class="preview-shell">
+      <div id="cover" class="paper">
+        <div class="inner"></div><div class="corner c1">❧</div><div class="corner c2">❧</div><div class="corner c3">❧</div><div class="corner c4">❧</div>
+        <h1>PROJECT FILE</h1><h2 id="cTitle">Accounting for Share Capital</h2>
+        <p>Submitted by:</p><p><b id="cName">Sakir Ahmed</b></p>
+        <div class="meta">Class: <span id="cClass">12th</span><br>Roll No.: <span id="cRoll">25</span><br>Subject: <span id="cSubject">Accountancy</span><br>School: <span id="cSchool">Your School Name</span><br>Teacher: <span id="cTeacher">Teacher's Name</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="templates" class="page">
+  <div class="section-title"><div><h2>Templates Gallery</h2><div class="muted">Decorated styles for covers and project pages.</div></div></div>
+  <div class="templates">
+    <div class="template active"><div class="template-preview">PROJECT<br>FILE<br><small>Classic Floral</small></div><div class="template-name">Classic</div><div class="template-sub">Elegant border and corner decoration</div></div>
+    <div class="template"><div class="template-preview modern">PROJECT<br>FILE<br><small>MODERN</small></div><div class="template-name">Modern</div><div class="template-sub">Bold academic style</div></div>
+    <div class="template"><div class="template-preview minimal">PROJECT<br>FILE<br><small>MINIMAL</small></div><div class="template-name">Minimal</div><div class="template-sub">Clean and simple</div></div>
+    <div class="template"><div class="template-preview vintage">PROJECT<br>FILE<br><small>VINTAGE</small></div><div class="template-name">Vintage</div><div class="template-sub">Traditional project-file look</div></div>
+    <div class="template"><div class="template-preview rose">PROJECT<br>FILE<br><small>ELEGANT</small></div><div class="template-name">Elegant Rose</div><div class="template-sub">Decorative soft theme</div></div>
+    <div class="template"><div class="template-preview blue">PROJECT<br>FILE<br><small>ACADEMIC</small></div><div class="template-name">Academic Blue</div><div class="template-sub">Professional school style</div></div>
+  </div>
+</section>
+
+<section id="notes" class="page">
+  <div class="section-title"><div><h2>My Notes</h2><div class="muted">Keep notes here while preparing projects.</div></div><button class="btn primary" onclick="addNote()">+ New Note</button></div>
+  <div class="card" style="margin-bottom:16px"><input id="noteSearch" oninput="filterNotes()" placeholder="Search notes..." style="width:100%;background:#0a0f20;color:white;border:1px solid #303a5c;border-radius:10px;padding:12px"></div>
+  <div id="notesGrid" class="notes-grid">
+    <article class="note"><h3>Accountancy — Partnership</h3><p>Important formulas, journal entries and revision points.</p></article>
+    <article class="note"><h3>Economics — Liberalisation</h3><p>Key definitions, causes, effects and examples for revision.</p></article>
+    <article class="note"><h3>Business Studies — Chapter 1</h3><p>Management concepts, objectives and important questions.</p></article>
+    <article class="note"><h3>Mathematics — Integrals</h3><p>Methods, standard results and practice reminders.</p></article>
+  </div>
+</section>
+
+<section id="project" class="page">
+  <div class="section-title">
+    <div><h2 id="projectHeading">Project Editor</h2><div class="muted">Edit and preview every project section.</div></div>
+    <div class="top-actions no-print"><button class="btn" onclick="downloadProject()">⬇ Download</button><button class="btn primary" onclick="printProject()">🖨 Export / Save PDF</button></div>
+  </div>
+  <div class="project-pages">
+    <div class="page-list no-print" id="pageList"></div>
+    <div class="project-view"><div id="contentPaper" class="content-paper"></div></div>
+  </div>
+</section>
+</main>
+</div>
+<div id="toast" class="toast"></div>
+</div>
+
+<script>
+const state={title:'Accounting for Share Capital',student:'Sakir Ahmed',cls:'12th',roll:'25',school:'Your School Name',subject:'Accountancy',teacher:"Teacher's Name",session:'2026–27',theme:'classic',pages:[],current:0};
+
+function showPage(id){
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+ document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));
+ if(id==='designer') syncDesigner();
+ if(id==='project') renderProject();
+}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
+function syncDesigner(){
+ document.getElementById('dTitle').value=state.title;document.getElementById('dName').value=state.student;document.getElementById('dClass').value=state.cls;
+ document.getElementById('dRoll').value=state.roll;document.getElementById('dSchool').value=state.school;document.getElementById('dSubject').value=state.subject;document.getElementById('dTeacher').value=state.teacher;document.getElementById('dTheme').value=state.theme;
+ updateCover();
+}
+function updateCover(){
+ const 
